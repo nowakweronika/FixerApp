@@ -9,7 +9,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 private const val BASE_URL = "http://data.fixer.io/api/"
-private const val KEY = "442af56b37d48903672db189745b7f4b"
+private const val KEY = "224f9d914c24db471f859cc7d2634480"
 
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())

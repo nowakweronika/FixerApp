@@ -1,40 +1,52 @@
 package com.example.fixerapp.rates
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fixerapp.R
-import java.time.LocalDate
+import com.example.fixerapp.BR
 
 class RatesAdapter : RecyclerView.Adapter<RatesAdapter.DataViewHolder>() {
-    class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private fun bindDate(item: LocalDate){
-            itemView.findViewById<TextView>(R.id.dateTextView)?.text = item.toString()
+
+    var itemViewModels: List<ItemViewModel> = emptyList()
+    private val viewTypeToLayoutId: MutableMap<Int, Int> = mutableMapOf()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder {
+        val binding: ViewDataBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            viewTypeToLayoutId[viewType] ?: 0,
+            parent,
+            false)
+        return DataViewHolder(binding)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        val item = itemViewModels[position]
+        if (!viewTypeToLayoutId.containsKey(item.viewType)) {
+            viewTypeToLayoutId[item.viewType] = item.layoutId
+        }
+        return item.viewType
+    }
+
+    override fun getItemCount(): Int = itemViewModels.size
+
+    override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
+        holder.bind(itemViewModels[position])
+    }
+
+    fun updateItems(items: List<ItemViewModel>?) {
+        itemViewModels = items ?: emptyList()
+        notifyDataSetChanged()
+    }
+
+    class DataViewHolder(private val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(itemViewModel: ItemViewModel) {
+            binding.setVariable(BR.itemViewModel, itemViewModel)
         }
     }
     companion object{
-        private const val DATE_VALUE = 0
-        private const val RATE_VALUE = 1
-    }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder {
-        val layout = when (viewType) {
-            DATE_VALUE -> R.layout.header_item
-            RATE_VALUE -> R.layout.rate_item
-            else -> throw IllegalArgumentException("Invalid view type")
-        }
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(layout, parent, false)
-        return DataViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        const val DATE_VALUE = 0
+        const val RATE_VALUE = 1
     }
 }

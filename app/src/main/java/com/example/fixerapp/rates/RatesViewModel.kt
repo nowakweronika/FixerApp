@@ -26,9 +26,15 @@ class RatesViewModel: ViewModel() {
     private val _rates = MutableLiveData<Map<String, Double>>()
     val rates: LiveData<Map<String, Double>> get() = _rates
 
+    private val _data = MutableLiveData<List<ItemViewModel>>()
+    val data: LiveData<List<ItemViewModel>> get() = _data
+
+    private val viewData = mutableListOf<ItemViewModel>()
+
+
     init {
         setCurrentDate()
-        getData(_date.value.toString())
+        getFixerData(_date.value.toString())
     }
 
     private fun setCurrentDate(){
@@ -39,15 +45,20 @@ class RatesViewModel: ViewModel() {
 
     fun updateDate(){
         _date.value = _date.value!!.minusDays(1)
-        getData(_date.value.toString())
+        getFixerData(_date.value.toString())
     }
 
-    private fun getData(myDate: String) {
+    private fun getFixerData(myDate: String) {
+        viewData.add(HeaderViewModel(_date.value.toString()))
         viewModelScope.launch {
             try {
                 _dailyRates.value = FixerApi.retrofitService.getData(myDate)
-                _rates.value = _dailyRates.value?.rates
-                Log.i("API_SERVICE", _rates.value.toString())
+                _rates.value = _dailyRates.value!!.rates
+                for(item in _rates.value!!.entries){
+                    viewData.add(CurrencyViewModel(item.key, item.value.toString()))
+                    Log.i("DATA", item.toString())
+                }
+                _data.value = viewData
             } catch (e: Exception) {
                 Log.i("API_SERVICE", e.toString())
             }
