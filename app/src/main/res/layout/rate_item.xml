@@ -6,14 +6,14 @@
     <data>
         <variable
             name="itemViewModel"
-            type="com.example.fixerapp.rates.CurrencyViewModel" />
+            type="com.example.fixerapp.network.RecyclerItem" />
     </data>
-    
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="60dp"
         android:layout_margin="8dp"
-        android:background="#FFE57F">
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/currencyTextView"
@@ -42,6 +42,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/currencyTextView"
             app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

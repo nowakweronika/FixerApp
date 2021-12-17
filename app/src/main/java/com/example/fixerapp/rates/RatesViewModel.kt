@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fixerapp.network.FixerApi
 import com.example.fixerapp.network.FixerData
+import com.example.fixerapp.network.RecyclerItem
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,11 +27,13 @@ class RatesViewModel: ViewModel() {
     private val _rates = MutableLiveData<Map<String, Double>>()
     val rates: LiveData<Map<String, Double>> get() = _rates
 
-    private val _data = MutableLiveData<List<ItemViewModel>>()
-    val data: LiveData<List<ItemViewModel>> get() = _data
+    private val _viewData = mutableListOf<RecyclerItem>()
 
-    private val viewData = mutableListOf<ItemViewModel>()
+    private val _correctData = MutableLiveData<List<RecyclerItem>>()
+    val correctData: LiveData<List<RecyclerItem>> get() = _correctData
 
+    private val _navToDetail = MutableLiveData<RecyclerItem>()
+    val navToDetail: LiveData<RecyclerItem> get() = _navToDetail
 
     init {
         setCurrentDate()
@@ -49,20 +52,28 @@ class RatesViewModel: ViewModel() {
     }
 
     private fun getFixerData(myDate: String) {
-        viewData.add(HeaderViewModel(_date.value.toString()))
+        _viewData.add(RecyclerItem(RatesAdapter.DATE_VALUE,"", "",_date.value.toString()))
         viewModelScope.launch {
             try {
                 _dailyRates.value = FixerApi.retrofitService.getData(myDate)
                 _rates.value = _dailyRates.value!!.rates
                 for(item in _rates.value!!.entries){
-                    viewData.add(CurrencyViewModel(item.key, item.value.toString()))
-                    Log.i("DATA", item.toString())
+                    _viewData.add(
+                        RecyclerItem(RatesAdapter.RATE_VALUE,
+                        item.key, item.value.toString(), _date.value.toString()))
                 }
-                _data.value = viewData
+                _correctData.value = _viewData
             } catch (e: Exception) {
                 Log.i("API_SERVICE", e.toString())
             }
         }
     }
-
+    fun displayDetails(item: RecyclerItem){
+        _navToDetail.value = item
+    }
+    /*Need this to mark nav state to complete and to avoid the nav being triggered
+    * again when the user returns from the detail*/
+    fun displayDetailsComplete(){
+        _navToDetail.value = null
+    }
 }

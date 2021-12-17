@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/ratesFragment">
+    <fragment
+        android:id="@+id/ratesFragment"
+        android:name="com.example.fixerapp.rates.RatesFragment"
+        android:label="RatesFragment" >
+        <action
+            android:id="@+id/action_ratesFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.example.fixerapp.details.DetailsFragment"
+        android:label="DetailsFragment">
+        <argument
+            android:name="selectedRate"
+            app:argType="com.example.fixerapp.network.RecyclerItem" />
+    </fragment>
+</navigation>
