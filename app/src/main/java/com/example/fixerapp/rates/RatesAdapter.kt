@@ -1,6 +1,5 @@
 package com.example.fixerapp.rates
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,12 +19,12 @@ class RatesAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        if (viewType == DATE_VALUE) {
-            return DateViewHolder(
+        return if (viewType == DATE_VALUE) {
+            DateViewHolder(
                 HeaderItemBinding.inflate(LayoutInflater.from(parent.context))
             )
         } else{
-            return RateViewHolder(
+            RateViewHolder(
                 RateItemBinding.inflate(LayoutInflater.from(parent.context))
             )
         }
@@ -40,20 +39,14 @@ class RatesAdapter(
         if (recyclerValues[position].viewType === DATE_VALUE) {
             val item = recyclerValues[position]
             val dateHolder = holder as DateViewHolder
-            //dateHolder.date.text = item.date
             dateHolder.bind(item)
-            Log.i("ON_BIND_DATE", item.toString())
         } else {
             val item = recyclerValues[position]
             val rateHolder = holder as RateViewHolder
-            /*rateHolder.currency.text = item.currency
-            rateHolder.rate.text = item.rate.toString()*/
             rateHolder.itemView.setOnClickListener {
                 onClickListener.onClick(item)
             }
             rateHolder.bind(item)
-            Log.i("ON_BIND_RATE", item.toString())
-            //TODO setOnClickListener
         }
     }
 
@@ -61,17 +54,6 @@ class RatesAdapter(
     override fun getItemViewType(position: Int): Int {
         return recyclerValues[position].viewType
     }
-
-    /*private inner class DateViewHolder(binding: HeaderItemBinding)
-        : RecyclerView.ViewHolder(binding.root) {
-        val date: TextView = binding.dateTextView
-    }*/
-    /*private inner class RateViewHolder(binding: RateItemBinding)
-        : RecyclerView.ViewHolder(binding.root){
-        val currency: TextView = binding.currencyTextView
-        val rate: TextView = binding.rateTextView
-        val itemContainer: View = binding.root
-    }*/
     class DateViewHolder(private var binding: HeaderItemBinding):
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: RecyclerItem) {
@@ -85,8 +67,6 @@ class RatesAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: RecyclerItem) {
             binding.itemViewModel = item
-            // This is important, because it forces the data binding to execute immediately,
-            // which allows the RecyclerView to make the correct view size measurements
             binding.executePendingBindings()
         }
     }
@@ -107,7 +87,6 @@ class InfiniteScrollListener(
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
-
         if (dy > 0) {
             visibleItemCount = recyclerView.childCount
             totalItemCount = layoutManager.itemCount
